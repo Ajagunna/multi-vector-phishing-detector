@@ -1,0 +1,47 @@
+{
+  "dataset": {
+    "name": "MeAJOR",
+    "train_n": 6000,
+    "val_n": 1200,
+    "test_n": 2000,
+    "note": "Stratified subsets of MeAJOR Excel splits (text + label)"
+  },
+  "models": {
+    "Naive_Bayes_TFIDF": {
+      "precision": 0.981,
+      "recall": 0.914,
+      "f1": 0.9462,
+      "accuracy": 0.948,
+      "train_seconds": 3.26
+    },
+    "Linear_SVM_TFIDF": {
+      "precision": 0.961,
+      "recall": 0.956,
+      "f1": 0.9584,
+      "accuracy": 0.959,
+      "train_seconds": 3.34
+    },
+    "Random_Forest_TFIDF": {
+      "precision": 0.937,
+      "recall": 0.962,
+      "f1": 0.9492,
+      "accuracy": 0.949,
+      "train_seconds": 5.09
+    },
+    "Surrogate_MultiVector": {
+      "precision": 0.7921,
+      "recall": 0.884,
+      "f1": 0.8355,
+      "accuracy": 0.826,
+      "tp": 884,
+      "fp": 232,
+      "tn": 768,
+      "fn": 116,
+      "note": "App default CPU model (best_model.pt)"
+    },
+    "DistilBERT_MultiVector": {
+      "status": "code_ready",
+      "note": "Full distilbert-base-uncased multi-vector path in architecture.py (use_surrogate=False). Train with: python src/evaluation/run_benchmarks.py (requires transformers; longer on CPU). Checkpoint path: models/distilbert_multivector.pt"
+    }
+  }
+}

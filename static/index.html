@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Multi-Vector DistilBERT · Phishing Email Detection · MeAJOR</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="/static/js/app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">🛡</div>
+      <h1>
+        Multi-Vector Phishing Detector
+        <span>Machine Learning Approach · DistilBERT Architecture · MeAJOR Dataset</span>
+      </h1>
+    </div>
+    <div class="header-right">
+      <span class="badge">Multi-Vector · Hybrid</span>
+      <div class="pill-status" id="modelStatus">Loading model…</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>✦ Methodology at a glance</h2>
+      <div class="about-grid">
+        <div class="about-item"><strong>Text track</strong><span>Contextual encoder (DistilBERT path / surrogate multi-vector) on subject + body</span></div>
+        <div class="about-item"><strong>Metadata track</strong><span>URL stats, entropy, domain signals, attachment heuristics</span></div>
+        <div class="about-item"><strong>Hybrid score</strong><span>Neural + lexical prior + reputation / sandbox boosts</span></div>
+        <div class="about-item"><strong>Corpus</strong><span>MeAJOR — Nazario · Nigerian Fraud · TREC (labelled)</span></div>
+      </div>
+      <div style="margin-top:0.85rem">
+        <span class="method-chip">SPF / DKIM proxies</span>
+        <span class="method-chip">URL entropy</span>
+        <span class="method-chip">Domain age proxy</span>
+        <span class="method-chip">VirusTotal heuristic</span>
+        <span class="method-chip">Attachment sandbox</span>
+        <span class="method-chip">Reason codes</span>
+        <span class="method-chip">Audit export</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Live statistics</h2>
+      <div class="stats-row">
+        <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">Messages processed</div></div>
+        <div class="stat legit"><div class="num" id="statLegit">0</div><div class="lbl">Legitimate</div></div>
+        <div class="stat phish"><div class="num" id="statPhish">0</div><div class="lbl">Phishing</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="statsChart"></canvas></div>
+    </div>
+
+    <div class="hero">
+      <div class="card">
+        <h2>✉ Classify email</h2>
+        <div class="dropzone" id="dropzone">
+          <span class="dz-icon">📥</span>
+          Drag &amp; drop <code>.eml</code> / <code>.txt</code>, or <strong>click to browse</strong>
+        </div>
+        <input type="file" id="fileInput" accept=".txt,.eml,.msg,text/plain" hidden />
+        <label for="emailText">Subject + body</label>
+        <textarea id="emailText" placeholder="Paste email subject and body here…"></textarea>
+        <label class="check"><input type="checkbox" id="enableVT" checked /> VirusTotal URL reputation (heuristic if no API key)</label>
+        <label class="check"><input type="checkbox" id="enableSandbox" checked /> Attachment sandbox heuristics</label>
+        <div class="btn-row">
+          <button class="primary" id="classifyBtn">Classify with multi-vector model</button>
+        </div>
+        <div class="result" id="classifyResult"></div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Sample messages</h2>
+        <div class="samples">
+          <button class="sample-btn" data-sample="phish1">🎣 Credential harvest (urgent login)</button>
+          <button class="sample-btn" data-sample="phish2">🎣 Wire-transfer + attachment</button>
+          <button class="sample-btn" data-sample="phish3">🎣 Prize / lottery social engineering</button>
+          <button class="sample-btn" data-sample="phish4">🎣 Fake bank transaction alert</button>
+          <button class="sample-btn" data-sample="phish5">🎣 HR payroll re-verification</button>
+          <button class="sample-btn" data-sample="obfusc">⚠️ Homoglyph / brand look-alike URL</button>
+          <button class="sample-btn" data-sample="legit1">✅ Team standup notes</button>
+          <button class="sample-btn" data-sample="legit2">✅ Ordinary work reply</button>
+          <button class="sample-btn" data-sample="legit3">✅ Meeting invitation</button>
+          <button class="sample-btn fp" data-sample="fp1">🟡 FP test: IT security reminder</button>
+          <button class="sample-btn fp" data-sample="fp2">🟡 FP test: Password expiry notice</button>
+          <button class="sample-btn fp" data-sample="fp3">🟡 FP test: Vendor invoice PDF</button>
+          <button class="sample-btn fp" data-sample="fp4">🟡 FP test: Bank statement available</button>
+        </div>
+        <p class="hint">Yellow samples use security language but are legitimate — useful false-positive checks.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.85rem;">
+        <h2 style="margin:0;">📋 Audit log</h2>
+        <div class="btn-row" style="margin:0;">
+          <button class="ghost" id="exportCsv">Export CSV</button>
+          <button class="ghost" id="exportJson">Export JSON</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Subject</th><th>Class</th><th>P(phish)</th><th>Reasons</th><th>ms</th></tr>
+          </thead>
+          <tbody id="auditBody">
+            <tr><td colspan="6" class="empty">No classifications yet — try a sample</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Machine Learning Approach to Phishing Email Detection Using a Multi-Vector DistilBERT and MeAJOR Dataset
+    · Academic prototype · Hybrid multi-vector inference
+  </footer>
+  <div class="toast" id="toast"></div>
+</body>
+</html>
